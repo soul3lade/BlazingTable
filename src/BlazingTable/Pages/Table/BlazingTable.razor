@@ -1,5 +1,62 @@
-﻿
+﻿@typeparam T
+
+<div class="blazingtable">
+    <BlazingTableHeader Title="@Title"></BlazingTableHeader>
+    <BlazingTableHead TableData="@TableData.FirstOrDefault()" SortColumn="@SortingColumn" SortDirection="@SortingDirection" OnSortClick="@UpdateSorting"></BlazingTableHead>
+    <BlazingTableBody TableData="@TableData" ActivePage="@ActivePage" PageSize="@PageSize"></BlazingTableBody>
+    <BlazingTableFooter TotalRecords="@TableData.Count()" CurrentPage="@ActivePage" PageSize="@PageSize" OnPageClick="@UpdatePaging" OnPageSizeClick="@UpdatePagingSize"></BlazingTableFooter>
+</div>
 
 @code {
 
+    [Parameter] public string Title { get; set; }
+
+    [Parameter] public List<T> TableData { get; set; }
+
+    private string SortingColumn { get; set; }
+
+    private string SortingDirection { get; set; }
+
+    private int ActivePage { get; set; }
+
+    private int PageSize { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ActivePage = 1;
+        PageSize = 10;
+        SortingDirection = "asc";
+    }
+
+    public void UpdateSorting(string sortingCol)
+    {
+        if (SortingColumn == sortingCol)
+        {
+            if (SortingDirection == "asc")
+                SortingDirection = "desc";
+            else
+                SortingDirection = "asc";
+        }
+        else
+            SortingDirection = "asc";
+
+        SortingColumn = sortingCol;
+
+        var propCol = typeof(T).GetProperty(SortingColumn);
+
+        if (SortingDirection == "asc")
+            TableData = TableData.OrderBy(x => propCol.GetValue(x, null)).ToList();
+        else
+            TableData = TableData.OrderByDescending(x => propCol.GetValue(x, null)).ToList();
+    }
+
+    public void UpdatePaging(int page)
+    {
+        ActivePage = page;
+    }
+
+    public void UpdatePagingSize(int pageSize)
+    {
+        PageSize = pageSize;
+    }
 }

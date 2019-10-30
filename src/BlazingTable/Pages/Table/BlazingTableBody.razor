@@ -1,5 +1,47 @@
-﻿
+﻿@typeparam T
+
+<table class="blazingtable-body">
+    <tbody>
+        @CreateTableBody()
+    </tbody>
+</table>
 
 @code {
+
+    [Parameter] public List<T> TableData { get; set; }
+
+    [Parameter] public int ActivePage { get; set; }
+
+    [Parameter] public int PageSize { get; set; }
+
+    private RenderFragment CreateTableBody()
+    {
+        var startingIndex = PageSize * (ActivePage - 1);
+        var endingIndex = ActivePage * PageSize;
+
+        if (endingIndex > TableData.Count())
+            endingIndex = TableData.Count();
+
+        RenderFragment tableData;
+
+        tableData = b =>
+        {
+            for (int i = startingIndex; i < endingIndex; i++)
+            {
+                b.OpenElement(0, "tr");
+
+                foreach (var prop in TableData[i].GetType().GetProperties())
+                {
+                    b.OpenElement(1, "td");
+                    b.AddContent(1, prop.GetValue(TableData[i]));
+                    b.CloseElement();
+                }
+
+                b.CloseElement();
+            }
+        };
+
+        return tableData;
+    }
 
 }

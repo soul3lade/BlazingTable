@@ -1,5 +1,33 @@
-﻿<h3>BlazingTableHead</h3>
+﻿@typeparam T
+
+<table class="blazingtable-head">
+    <tr>
+        @foreach(var prop in TableData.GetType().GetProperties())
+        {
+            if (SortColumn == prop.Name)
+            {
+                <th class="blazingtable-head-sortable blazingtable-sorting-@SortDirection" @onclick="(() => CallParentSort(prop.Name))">@prop.Name</th>
+            }
+            else
+            {
+                <th class="blazingtable-head-sortable" @onclick="@(() => CallParentSort(prop.Name))">@prop.Name</th>
+            }
+        }
+    </tr>
+</table>
 
 @code {
 
+    [Parameter] public T TableData { get; set; }
+
+    [Parameter] public string SortColumn { get; set; }
+
+    [Parameter] public string SortDirection { get; set; }
+
+    [Parameter] public EventCallback<string> OnSortClick { get; set; }
+
+    private async Task CallParentSort(string sortingCol)
+    {
+        await OnSortClick.InvokeAsync(sortingCol);
+    }
 }

@@ -1,5 +1,128 @@
-﻿<h3>BlazingTableFooter</h3>
+﻿
+<div class="blazingtable-footer">
+    <div class="row">
+        <div class="col-8">
+            <nav aria-label="Paging">
+                <ul class="pagination">
+                    @CreatePaging()
+                </ul>
+            </nav>
+        </div>
+        <div class="col-2">
+            Total Records: @TotalRecords
+        </div>
+        <div class="col-2">
+            Page Size: 
+            <select class="blazingtable-select" @onchange="@CallParentPageSize">
+                @foreach(var pageSizeOption in availablePageSizes)
+                {
+                    if(pageSizeOption == PageSize)
+                    {
+                        <option value="@pageSizeOption" selected="selected">@pageSizeOption</option>
+                    }
+                    else
+                    {
+                        <option value="@pageSizeOption">@pageSizeOption</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+</div>
 
 @code {
 
+    [Parameter] public int CurrentPage { get; set; }
+
+    [Parameter] public int PageSize { get; set; }
+
+    [Parameter] public int TotalRecords { get; set; }
+
+    [Parameter] public EventCallback<int> OnPageClick { get; set; }
+
+    [Parameter] public EventCallback<int> OnPageSizeClick { get; set; }
+
+    int[] availablePageSizes = new int[] { 5, 10, 25, 50 };
+
+    private async Task CallParentPaging(int page)
+    {
+        await OnPageClick.InvokeAsync(page);
+    }
+
+    private async Task CallParentPageSize(ChangeEventArgs e)
+    {
+        var pageSize = Convert.ToInt32(e.Value.ToString());
+        await OnPageSizeClick.InvokeAsync(pageSize);
+    }
+
+    private RenderFragment CreatePaging()
+    {
+        RenderFragment pageList;
+        var totalPages = Math.Ceiling(Convert.ToDouble(TotalRecords) / Convert.ToDouble(PageSize));
+
+        pageList = b =>
+        {
+            b.OpenElement(0, "li");
+
+            if (CurrentPage == 1)
+                b.AddAttribute(0, "class", "page-item disabled");
+            else
+                b.AddAttribute(0, "class", "page-item");
+
+            b.OpenElement(1, "a");
+            b.AddAttribute(1, "class", "page-link blazingtable-page");
+            b.AddAttribute(1, "aria-label", "Previous");
+            b.AddAttribute(1, "onclick", EventCallback.Factory.Create<int>(this, (() => CallParentPaging(CurrentPage - 1))));
+
+            b.OpenElement(2, "span");
+            b.AddAttribute(2, "aria-hidden", "true");
+            b.AddAttribute(2, "class", "oi oi-chevron-left");
+            b.CloseElement();
+
+            b.CloseElement();
+            b.CloseElement();
+
+            for(int i=1; i<=totalPages; i++)
+            {
+                var pageIndex = i;
+
+                b.OpenElement(0, "li");
+
+                if (i == CurrentPage)
+                    b.AddAttribute(0, "class", "page-item active");
+                else
+                    b.AddAttribute(0, "class", "page-item");
+
+                b.OpenElement(1, "a");
+                b.AddAttribute(1, "class", "page-link blazingtable-page");
+                b.AddAttribute(1, "onclick", EventCallback.Factory.Create<int>(this, (() => CallParentPaging(pageIndex))));
+                b.AddContent(1, i.ToString());
+
+                b.CloseElement();
+                b.CloseElement();
+            }
+
+            b.OpenElement(0, "li");
+
+            if (CurrentPage == totalPages)
+                b.AddAttribute(0, "class", "page-item disabled");
+            else
+                b.AddAttribute(0, "class", "page-item");
+
+            b.OpenElement(1, "a");
+            b.AddAttribute(1, "class", "page-link blazingtable-page");
+            b.AddAttribute(1, "aria-label", "Next");
+            b.AddAttribute(1, "onclick", EventCallback.Factory.Create<int>(this, (() => CallParentPaging(CurrentPage + 1))));
+
+            b.OpenElement(2, "span");
+            b.AddAttribute(2, "aria-hidden", "true");
+            b.AddAttribute(2, "class", "oi oi-chevron-right");
+            b.CloseElement();
+
+            b.CloseElement();
+            b.CloseElement();
+        };
+
+        return pageList;
+    }
 }

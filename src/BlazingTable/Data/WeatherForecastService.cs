@@ -26,7 +26,7 @@ namespace BlazingTable.Data
         public Task<List<WeatherForecast>> GetForecastListAsync(DateTime startDate)
         {
             var rng = new Random();
-            return Task.FromResult(Enumerable.Range(1, 50).Select(index => new WeatherForecast
+            return Task.FromResult(Enumerable.Range(1, 55).Select(index => new WeatherForecast
             {
                 Date = startDate.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),

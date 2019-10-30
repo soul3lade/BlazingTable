@@ -1,0 +1,47 @@
+﻿.blazingtable {
+    width: 100%;
+}
+
+.blazingtable-header-title {
+    font-size: 2em;
+    font-weight: 200;
+}
+
+.blazingtable-head {
+    width: 100%;
+}
+
+.blazingtable-head tr {
+    background-color: #79e5f7;
+}
+
+.blazingtable-head-sortable {
+    cursor: pointer;
+    padding-right: 10px;
+}
+
+.blazingtable-sorting-asc:after,
+.blazingtable-sorting-desc:after {
+    content: ' ';
+    position: relative;
+    left: 2px;
+    border: 8px solid transparent;
+}
+
+.blazingtable-sorting-asc:after {
+    top: 10px;
+    border-top-color: green;
+}
+
+.blazingtable-body {
+    width: 100%;
+}
+
+.blazingtable-body tr:nth-child(even) {
+    background-color: #e4e4e4;
+}
+
+.blazingtable-page {
+    cursor: pointer;
+    height: 35px;
+}
