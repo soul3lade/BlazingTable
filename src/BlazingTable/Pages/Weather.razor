@@ -21,6 +21,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         forecasts = await ForecastService.GetForecastListAsync(DateTime.Now);
+        //forecasts = new List<WeatherForecast>();
     }
 
 }

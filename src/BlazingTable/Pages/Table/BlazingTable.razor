@@ -2,8 +2,10 @@
 
 <div class="blazingtable">
     <BlazingTableHeader Title="@Title"></BlazingTableHeader>
-    <BlazingTableHead TableData="@TableData.FirstOrDefault()" SortColumn="@SortingColumn" SortDirection="@SortingDirection" OnSortClick="@UpdateSorting"></BlazingTableHead>
-    <BlazingTableBody TableData="@TableData" ActivePage="@ActivePage" PageSize="@PageSize"></BlazingTableBody>
+    <table>
+        <BlazingTableHead TableData="@TableData.FirstOrDefault()" SortColumn="@SortingColumn" SortDirection="@SortingDirection" OnSortClick="@UpdateSorting"></BlazingTableHead>
+        <BlazingTableBody TableData="@TableData" ActivePage="@ActivePage" PageSize="@PageSize"></BlazingTableBody>
+    </table>
     <BlazingTableFooter TotalRecords="@TableData.Count()" CurrentPage="@ActivePage" PageSize="@PageSize" OnPageClick="@UpdatePaging" OnPageSizeClick="@UpdatePagingSize"></BlazingTableFooter>
 </div>
 

@@ -1,10 +1,9 @@
 ﻿@typeparam T
 
-<table class="blazingtable-body">
-    <tbody>
-        @CreateTableBody()
-    </tbody>
-</table>
+<tbody class="blazingtable-body">
+    @CreateTableBody()
+</tbody>
+
 
 @code {
 
@@ -16,6 +15,26 @@
 
     private RenderFragment CreateTableBody()
     {
+        if(TableData.Count() <= 0)
+        {
+            RenderFragment emptyData;
+
+            emptyData = b =>
+            {
+                b.OpenElement(0, "div");
+                b.AddAttribute(0, "class", "blazingtable-body");
+
+                b.OpenElement(1, "span");
+                b.AddAttribute(1, "class", "blazingtable-body-nodata");
+                b.AddContent(1, "No Data");
+
+                b.CloseElement();
+                b.CloseElement();
+            };
+
+            return emptyData;
+        }
+
         var startingIndex = PageSize * (ActivePage - 1);
         var endingIndex = ActivePage * PageSize;
 

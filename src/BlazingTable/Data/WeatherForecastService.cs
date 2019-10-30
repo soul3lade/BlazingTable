@@ -33,5 +33,10 @@ namespace BlazingTable.Data
                 Summary = Summaries[rng.Next(Summaries.Length)]
             }).ToList());
         }
+
+        public List<WeatherForecast> GetEmptyList()
+        {
+            return new List<WeatherForecast>();
+        }
     }
 }

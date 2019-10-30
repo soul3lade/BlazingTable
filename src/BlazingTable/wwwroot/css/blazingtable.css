@@ -2,6 +2,10 @@
     width: 100%;
 }
 
+.blazingtable table {
+    width: 100%;
+}
+
 .blazingtable-header-title {
     font-size: 2em;
     font-weight: 200;
@@ -35,6 +39,22 @@
 
 .blazingtable-body {
     width: 100%;
+}
+
+.blazingtable-body div {
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #bfbfbf;
+}
+
+.blazingtable-body-nodata {
+    font-size: 2em;
+    width: 200px;
+    margin: 5px;
+    text-align: center;
 }
 
 .blazingtable-body tr:nth-child(even) {

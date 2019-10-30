@@ -1,20 +1,23 @@
 ﻿@typeparam T
 
-<table class="blazingtable-head">
+<thead class="blazingtable-head">
     <tr>
-        @foreach(var prop in TableData.GetType().GetProperties())
+        @if (TableData != null)
         {
-            if (SortColumn == prop.Name)
+            foreach (var prop in TableData.GetType().GetProperties())
             {
-                <th class="blazingtable-head-sortable blazingtable-sorting-@SortDirection" @onclick="(() => CallParentSort(prop.Name))">@prop.Name</th>
-            }
-            else
-            {
-                <th class="blazingtable-head-sortable" @onclick="@(() => CallParentSort(prop.Name))">@prop.Name</th>
+                if (SortColumn == prop.Name)
+                {
+                    <th class="blazingtable-head-sortable blazingtable-sorting-@SortDirection" @onclick="(() => CallParentSort(prop.Name))">@prop.Name</th>
+                }
+                else
+                {
+                    <th class="blazingtable-head-sortable" @onclick="@(() => CallParentSort(prop.Name))">@prop.Name</th>
+                }
             }
         }
     </tr>
-</table>
+</thead>
 
 @code {
 
