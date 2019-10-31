@@ -1,5 +1,5 @@
 ﻿.blazingtable {
-    width: 100%;
+    /*width: 100%;*/
 }
 
 .blazingtable table {
@@ -19,9 +19,12 @@
     background-color: #79e5f7;
 }
 
+.blazingtable-head th {
+    border: 1px solid #bfbfbf;
+}
+
 .blazingtable-head-sortable {
     cursor: pointer;
-    padding-right: 10px;
 }
 
 .blazingtable-sorting-asc:after,
@@ -35,6 +38,11 @@
 .blazingtable-sorting-asc:after {
     top: 10px;
     border-top-color: green;
+}
+
+.blazingtable-sorting-desc:after {
+    bottom: 10px;
+    border-bottom-color: green;
 }
 
 .blazingtable-body {
@@ -59,6 +67,15 @@
 
 .blazingtable-body tr:nth-child(even) {
     background-color: #e4e4e4;
+}
+
+.blazingtable-body tr:hover {
+    background-color: #93d8ff;
+    cursor: pointer;
+}
+
+.blazingtable-body td {
+    border: 1px solid #bfbfbf;
 }
 
 .blazingtable-page {

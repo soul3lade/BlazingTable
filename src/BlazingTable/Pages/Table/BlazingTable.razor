@@ -1,12 +1,13 @@
 ﻿@typeparam T
+@using BlazingTable.Models
 
-<div class="blazingtable">
-    <BlazingTableHeader Title="@Title"></BlazingTableHeader>
+<div class="blazingtable" style="width: @Settings.Width; height: @Settings.Height">
+    <BlazingTableHeader Title="@Settings.Title"></BlazingTableHeader>
     <table>
-        <BlazingTableHead TableData="@TableData.FirstOrDefault()" SortColumn="@SortingColumn" SortDirection="@SortingDirection" OnSortClick="@UpdateSorting"></BlazingTableHead>
-        <BlazingTableBody TableData="@TableData" ActivePage="@ActivePage" PageSize="@PageSize"></BlazingTableBody>
+        <BlazingTableHead TableData="@Settings.Data.FirstOrDefault()" SortColumn="@SortingColumn" SortDirection="@SortingDirection" OnSortClick="@UpdateSorting" Columns="@Settings.Columns"></BlazingTableHead>
+        <BlazingTableBody TableData="@Settings.Data" Columns="@Settings.Columns" ActivePage="@ActivePage" PageSize="@PageSize"></BlazingTableBody>
     </table>
-    <BlazingTableFooter TotalRecords="@TableData.Count()" CurrentPage="@ActivePage" PageSize="@PageSize" OnPageClick="@UpdatePaging" OnPageSizeClick="@UpdatePagingSize"></BlazingTableFooter>
+    <BlazingTableFooter TotalRecords="@Settings.Data.Count()" CurrentPage="@ActivePage" PageSize="@PageSize" OnPageClick="@UpdatePaging" OnPageSizeClick="@UpdatePagingSize"></BlazingTableFooter>
 </div>
 
 @code {
@@ -14,6 +15,8 @@
     [Parameter] public string Title { get; set; }
 
     [Parameter] public List<T> TableData { get; set; }
+
+    [Parameter] public BlazingTableSettings<T> Settings { get; set; }
 
     private string SortingColumn { get; set; }
 
@@ -23,11 +26,27 @@
 
     private int PageSize { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         ActivePage = 1;
         PageSize = 10;
         SortingDirection = "asc";
+
+        if(Settings == null)
+        {
+            Settings = new BlazingTableSettings<T>()
+            {
+                Title = Title,
+                Data = TableData,
+                Width = "100%",
+                Height = "60vh"
+            };
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+
     }
 
     public void UpdateSorting(string sortingCol)
@@ -47,9 +66,9 @@
         var propCol = typeof(T).GetProperty(SortingColumn);
 
         if (SortingDirection == "asc")
-            TableData = TableData.OrderBy(x => propCol.GetValue(x, null)).ToList();
+            Settings.Data = Settings.Data.OrderBy(x => propCol.GetValue(x, null)).ToList();
         else
-            TableData = TableData.OrderByDescending(x => propCol.GetValue(x, null)).ToList();
+            Settings.Data = Settings.Data.OrderByDescending(x => propCol.GetValue(x, null)).ToList();
     }
 
     public void UpdatePaging(int page)

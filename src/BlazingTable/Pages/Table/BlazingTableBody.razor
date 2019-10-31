@@ -1,4 +1,5 @@
 ﻿@typeparam T
+@using BlazingTable.Models
 
 <tbody class="blazingtable-body">
     @CreateTableBody()
@@ -8,6 +9,8 @@
 @code {
 
     [Parameter] public List<T> TableData { get; set; }
+
+    [Parameter] public List<BlazingTableColumn> Columns { get; set; }
 
     [Parameter] public int ActivePage { get; set; }
 
@@ -43,22 +46,45 @@
 
         RenderFragment tableData;
 
-        tableData = b =>
+        if (Columns != null)
         {
-            for (int i = startingIndex; i < endingIndex; i++)
+            tableData = b =>
             {
-                b.OpenElement(0, "tr");
-
-                foreach (var prop in TableData[i].GetType().GetProperties())
+                for (int i = startingIndex; i < endingIndex; i++)
                 {
-                    b.OpenElement(1, "td");
-                    b.AddContent(1, prop.GetValue(TableData[i]));
+                    b.OpenElement(0, "tr");
+
+                    foreach (var column in Columns.OrderBy(x => x.Order))
+                    {
+                        var prop = TableData[i].GetType().GetProperty(column.Id);
+                        b.OpenElement(1, "td");
+                        b.AddContent(1, prop.GetValue(TableData[i]));
+                        b.CloseElement();
+                    }
+
                     b.CloseElement();
                 }
+            };
+        }
+        else
+        {
+            tableData = b =>
+            {
+                for (int i = startingIndex; i < endingIndex; i++)
+                {
+                    b.OpenElement(0, "tr");
 
-                b.CloseElement();
-            }
-        };
+                    foreach (var prop in TableData[i].GetType().GetProperties())
+                    {
+                        b.OpenElement(1, "td");
+                        b.AddContent(1, prop.GetValue(TableData[i]));
+                        b.CloseElement();
+                    }
+
+                    b.CloseElement();
+                }
+            };
+        }
 
         return tableData;
     }

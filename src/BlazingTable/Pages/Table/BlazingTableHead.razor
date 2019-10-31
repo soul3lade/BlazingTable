@@ -1,21 +1,9 @@
 ﻿@typeparam T
+@using BlazingTable.Models
 
 <thead class="blazingtable-head">
     <tr>
-        @if (TableData != null)
-        {
-            foreach (var prop in TableData.GetType().GetProperties())
-            {
-                if (SortColumn == prop.Name)
-                {
-                    <th class="blazingtable-head-sortable blazingtable-sorting-@SortDirection" @onclick="(() => CallParentSort(prop.Name))">@prop.Name</th>
-                }
-                else
-                {
-                    <th class="blazingtable-head-sortable" @onclick="@(() => CallParentSort(prop.Name))">@prop.Name</th>
-                }
-            }
-        }
+        @CreateTableHeader()
     </tr>
 </thead>
 
@@ -29,8 +17,87 @@
 
     [Parameter] public EventCallback<string> OnSortClick { get; set; }
 
+    [Parameter] public List<BlazingTableColumn> Columns { get; set; }
+
     private async Task CallParentSort(string sortingCol)
     {
         await OnSortClick.InvokeAsync(sortingCol);
+    }
+
+    private RenderFragment CreateTableHeader()
+    {
+        RenderFragment tableHeader;
+
+        if (Columns != null)
+        {
+
+            tableHeader = b =>
+            {
+                foreach (var column in Columns.OrderBy(x => x.Order))
+                {
+                    var cssClass = "";
+
+                    b.OpenElement(0, "th");
+                    b.AddAttribute(0, "id", column.Id);
+                    b.AddAttribute(0, "onclick", EventCallback.Factory.Create<string>(this, (() => CallParentSort(column.Id))));
+
+                    if (column.Sortable)
+                    {
+                        cssClass += "blazingtable-head-sortable";
+                        if (SortColumn == column.Id)
+                        {
+                            cssClass += $" blazingtable-sorting-{SortDirection}";
+                        }
+                    }
+
+                    if(column.Filterable)
+                    {
+                        cssClass += " blazingtable-head-filterable";
+                    }
+
+                    if(column.AllowResize)
+                    {
+                        cssClass += " blazingtable-head-resizeable";
+                    }
+
+                    if(column.AllowHide)
+                    {
+                        cssClass += " blazingtable-head-hideable";
+                        if(column.Hidden)
+                        {
+                            b.AddAttribute(0, "hidden", "hidden");
+                        }
+                    }
+
+
+                    b.AddAttribute(0, "class", cssClass);
+                    b.AddContent(0, column.Name);
+                    b.CloseElement();
+                }
+            };
+        }
+        else
+        {
+            tableHeader = b =>
+            {
+                foreach (var prop in TableData.GetType().GetProperties())
+                {
+                    var cssClass = "blazingtable-head-sortable";
+                    b.OpenElement(0, "th");
+                    b.AddAttribute(0, "onclick", EventCallback.Factory.Create<string>(this, (() => CallParentSort(prop.Name))));
+
+                    if (SortColumn == prop.Name)
+                    {
+                        cssClass += $" blazingtable-sorting-{SortDirection}";
+                    }
+
+                    b.AddAttribute(0, "class", cssClass);
+                    b.AddContent(0, prop.Name);
+                    b.CloseElement();
+                }
+            };
+        }
+
+        return tableHeader;
     }
 }

@@ -1,27 +1,41 @@
 ﻿@page "/weather"
 
 @using BlazingTable.Data
+@using BlazingTable.Models
 @inject WeatherForecastService ForecastService
 
 <h3>Weather</h3>
 
-@if (forecasts == null)
+@if (blazingTableSettings == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <BlazingTable Title="Blazing Table" TableData="@forecasts"></BlazingTable>
+    <BlazingTable Settings="@blazingTableSettings"></BlazingTable>
 }
+
 
 @code {
 
     List<WeatherForecast> forecasts;
 
+    private BlazingTableSettings<WeatherForecast> blazingTableSettings;
+
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await ForecastService.GetForecastListAsync(DateTime.Now);
-        //forecasts = new List<WeatherForecast>();
+        blazingTableSettings = new BlazingTableSettings<WeatherForecast>();
+
+        blazingTableSettings.Title = "Blazing Table";
+        blazingTableSettings.Data = await ForecastService.GetForecastListAsync(DateTime.Now);
+        blazingTableSettings.Width = "100%";
+        blazingTableSettings.Height = "60vh";
+
+        blazingTableSettings.Columns = new List<BlazingTableColumn>();
+        blazingTableSettings.Columns.Add(new BlazingTableColumn() { Id = "Date", Name = "Date", Order = 0});
+        blazingTableSettings.Columns.Add(new BlazingTableColumn() { Id = "TemperatureC", Name = "Celsius", Order=2 });
+        blazingTableSettings.Columns.Add(new BlazingTableColumn() { Id = "TemperatureF", Name = "Fahrenheit", Order = 3 });
+        blazingTableSettings.Columns.Add(new BlazingTableColumn() { Id = "Summary", Name = "Condition", Order = 1 });
     }
 
 }
