@@ -16,6 +16,8 @@
 
     [Parameter] public int PageSize { get; set; }
 
+    [Parameter] public EventCallback<T> OnRowClick { get; set; }
+
     private RenderFragment CreateTableBody()
     {
         if(TableData.Count() <= 0)
@@ -52,7 +54,9 @@
             {
                 for (int i = startingIndex; i < endingIndex; i++)
                 {
+                    var index = i;
                     b.OpenElement(0, "tr");
+                    b.AddAttribute(0, "onclick", EventCallback.Factory.Create<T>(this, (() => CallParentRowClick(TableData[index]))));
 
                     foreach (var column in Columns.OrderBy(x => x.Order))
                     {
@@ -72,7 +76,9 @@
             {
                 for (int i = startingIndex; i < endingIndex; i++)
                 {
+                    var index = i;
                     b.OpenElement(0, "tr");
+                    b.AddAttribute(0, "onclick", EventCallback.Factory.Create<T>(this, (() => CallParentRowClick(TableData[index]))));
 
                     foreach (var prop in TableData[i].GetType().GetProperties())
                     {
@@ -87,6 +93,11 @@
         }
 
         return tableData;
+    }
+
+    private async Task CallParentRowClick(T row)
+    {
+        await OnRowClick.InvokeAsync(row);
     }
 
 }

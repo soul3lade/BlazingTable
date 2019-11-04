@@ -12,7 +12,7 @@
 }
 else
 {
-    <BlazingTable Settings="@blazingTableSettings"></BlazingTable>
+    <BlazingTable T="WeatherForecast" Settings="@blazingTableSettings" OnRowClick="@TestRowClick"></BlazingTable>
 }
 
 
@@ -36,6 +36,11 @@ else
         blazingTableSettings.Columns.Add(new BlazingTableColumn() { Id = "TemperatureC", Name = "Celsius", Order=2 });
         blazingTableSettings.Columns.Add(new BlazingTableColumn() { Id = "TemperatureF", Name = "Fahrenheit", Order = 3 });
         blazingTableSettings.Columns.Add(new BlazingTableColumn() { Id = "Summary", Name = "Condition", Order = 1 });
+    }
+
+    public void TestRowClick(WeatherForecast rowClicked)
+    {
+        Console.WriteLine("Test worked!");
     }
 
 }
