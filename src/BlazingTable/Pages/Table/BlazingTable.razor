@@ -2,7 +2,7 @@
 @using BlazingTable.Models
 
 <div class="blazingtable" style="width: @Settings.Width; height: @Settings.Height">
-    <BlazingTableHeader Title="@Settings.Title"></BlazingTableHeader>
+    <BlazingTableHeader Title="@Settings.Title" ShowFilter="@ShowFilter" FilterData="@Settings.Data.FirstOrDefault()" ColumnSettings="@Settings.Columns" CallParentToggleFilterMenu="@ToggleFilterMenu"></BlazingTableHeader>
     <table>
         <BlazingTableHead TableData="@Settings.Data.FirstOrDefault()" SortColumn="@SortingColumn" SortDirection="@SortingDirection" OnSortClick="@UpdateSorting" Columns="@Settings.Columns"></BlazingTableHead>
         <BlazingTableBody T="T" TableData="@Settings.Data" Columns="@Settings.Columns" ActivePage="@ActivePage" PageSize="@PageSize" OnRowClick="@CallParentOnClick"></BlazingTableBody>
@@ -28,11 +28,14 @@
 
     private int PageSize { get; set; }
 
+    private bool ShowFilter { get; set; }
+
     protected override void OnInitialized()
     {
         ActivePage = 1;
         PageSize = 10;
         SortingDirection = "asc";
+        ShowFilter = false;
 
         if(Settings == null)
         {
@@ -78,9 +81,17 @@
         PageSize = pageSize;
     }
 
+    public void ToggleFilterMenu()
+    {
+        if (ShowFilter)
+            ShowFilter = false;
+        else
+            ShowFilter = true;
+    }
+
     public async Task CallParentOnClick(T rowData)
     {
         await OnRowClick.InvokeAsync(rowData);
-    }    
+    }
 
 }

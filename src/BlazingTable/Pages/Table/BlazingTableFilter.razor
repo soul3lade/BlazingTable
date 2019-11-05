@@ -1,0 +1,69 @@
+﻿@using BlazingTable.Models
+@typeparam T
+
+@CreateFilterMenu()
+
+
+@code {
+
+    [Parameter] public T FilterData { get; set; }
+
+    [Parameter] public List<BlazingTableColumn> ColumnSettings { get; set; }
+
+    public RenderFragment CreateFilterMenu()
+    {
+        RenderFragment filterMenu;
+
+        filterMenu = b =>
+        {
+            b.OpenElement(0, "div");
+            b.AddAttribute(0, "class", "blazingtable-filter");
+
+            b.OpenElement(1, "div");
+            b.AddAttribute(1, "class", "blazingtable-filter-content");
+
+            b.OpenElement(2, "div");
+            b.AddAttribute(2, "class", "blazingtable-filter-content-body");
+
+            if(ColumnSettings != null && ColumnSettings.Count() > 0)
+            {
+                foreach(var column in ColumnSettings)
+                {
+                    b.OpenElement(3, "div");
+                    b.AddAttribute(3, "class", "col-4");
+
+                    b.OpenElement(4, "label");
+                    b.AddAttribute(4, "class", "col-4");
+                    b.AddContent(4, column.Name);
+                    b.CloseElement();
+
+                    b.OpenElement(4, "input");
+                    b.AddAttribute(4, "class", "col-4");
+                    b.CloseElement();
+
+                    b.CloseElement();
+                }
+            }
+            else
+            {
+                foreach(var prop in FilterData.GetType().GetProperties())
+                {
+
+                }
+            }
+
+            b.CloseElement();
+
+            b.OpenElement(2, "div");
+            b.AddAttribute(2, "class", "blazingtable-filter-content-footer");
+            b.AddContent(2, "Button Here");
+            b.CloseElement();
+
+            b.CloseElement();
+            b.CloseElement();
+        };
+
+        return filterMenu;
+    }
+
+}
